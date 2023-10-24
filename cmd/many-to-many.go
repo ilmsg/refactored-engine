@@ -34,24 +34,25 @@ func main() {
 	var users []User
 	db.Find(&users)
 	fmt.Printf("users(%d):\n", len(users))
+	fmt.Println("-----------------------------------")
 	for _, user := range users {
 		fmt.Printf("email: %+v\n", user.Email)
 	}
 
 	// create project
-	db.Create(&Project{ID: uuid.New(), Title: "Project 1", Members: []User{users[0]}})
-	db.Create(&Project{ID: uuid.New(), Title: "Project 2", Members: []User{users[1], users[2]}})
+	db.Create(&Project{ID: uuid.New(), Title: "Project refactored", Members: []User{users[0]}})
+	db.Create(&Project{ID: uuid.New(), Title: "Project engine", Members: []User{users[1], users[2]}})
 
 	// get
 	var projects []Project
 	db.Model(&Project{}).Preload("Members").Find(&projects)
 
-	fmt.Printf("projects(%d):\n", len(projects))
+	fmt.Printf("\n\nprojects(%d):\n", len(projects))
+	fmt.Println("-----------------------------------")
 	for _, project := range projects {
-		fmt.Printf("title: %+v\n", project.Title)
-		fmt.Printf("members(%d):\n", len(project.Members))
-		for _, member := range project.Members {
-			fmt.Printf("email: %+v\n", member.Email)
+		fmt.Printf("\ntitle: %+v(%d members)\n", project.Title, len(project.Members))
+		for key, member := range project.Members {
+			fmt.Printf("member%d: %+v\n", key+1, member.Email)
 		}
 	}
 }
